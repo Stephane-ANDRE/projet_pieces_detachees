@@ -1,8 +1,11 @@
+
+import { ajoutListenersAvis } from "./avis.js";
 // getting datas from json file
 fetch("pieces-autos.json")
   .then(response => response.json())
   .then(pieces => {
     genererPieces(pieces);
+   
 
     // sort selection
     const sortButton = document.querySelector(".btn-trier");
@@ -101,7 +104,9 @@ fetch("pieces-autos.json")
       document.querySelector(".fiches").textContent = "";
       genererPieces(piecesFiltrees);
     });
+    
   })
+  
   .catch(error => {
     // Gérer les erreurs éventuelles ici
     console.error("Erreur lors de la récupération des données:", error);
@@ -139,6 +144,10 @@ function genererPieces(pieces) {
     // availability element
     const disponibiliteElement = document.createElement("p");
     disponibiliteElement.innerText = article.disponibilité ? "en stock" : "Rupture de stock";
+      //Opinion button
+      const avisBouton = document.createElement("button");
+      avisBouton.dataset.id = article.id;
+      avisBouton.textContent = "Afficher les avis";
 
     sectionFiches.appendChild(pieceElement);
     pieceElement.appendChild(imageElement);
@@ -147,5 +156,8 @@ function genererPieces(pieces) {
     pieceElement.appendChild(categorieElement);
     pieceElement.appendChild(descriptionElement);
     pieceElement.appendChild(disponibiliteElement);
+    pieceElement.appendChild(avisBouton);
   }
+   // Ajout de la fonction ajoutListenersAvis
+      ajoutListenersAvis();
 }
