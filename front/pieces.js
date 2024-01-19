@@ -1,163 +1,190 @@
+import {
+    ajoutListenersAvis,
+    ajoutListenerEnvoyerAvis,
+    afficherGraphiqueAvis,
+    afficherAvis,
+} from "./avis.js";
 
-import { ajoutListenersAvis } from "./avis.js";
-// getting datas from json file
-fetch("pieces-autos.json")
-  .then(response => response.json())
-  .then(pieces => {
-    genererPieces(pieces);
-   
+//if offline, we can get back the datas from localstorage
+let pieces = window.localStorage.getItem("pieces");
 
-    // sort selection
-    const sortButton = document.querySelector(".btn-trier");
-    sortButton.addEventListener("click", function () {
-      // stock datas in a new list according to the price the lowest to the highest
-      const sortedPieces = Array.from(pieces);
-      sortedPieces.sort(function (a, b) {
-        return a.prix - b.prix;
-      });
-      document.querySelector(".fiches").textContent = "";
-      genererPieces(sortedPieces);
-    });
-
-    // filter selection
-    const filterButton = document.querySelector(".btn-filtrer");
-    filterButton.addEventListener("click", function () {
-      const filteredPieces = pieces.filter(function (piece) {
-        return piece.prix <= 35;
-      });
-      document.querySelector(".fiches").textContent = "";
-      genererPieces(filteredPieces);
-    });
-
-    // description filter
-    const descriptionButton = document.querySelector(".btn-description");
-    descriptionButton.addEventListener("click", function () {
-      const piecesWithDescription = pieces.filter(function (piece) {
-        return piece.description;
-      });
-      document.querySelector(".fiches").textContent = "";
-      genererPieces(piecesWithDescription);
-    });
-
-    // sort selection DESC
-    const sortButtonDesc = document.querySelector(".btn-trier-desc");
-    sortButtonDesc.addEventListener("click", function () {
-      // stock datas in a new list according to the price the highest to the lowest
-      const sortedPieces = Array.from(pieces);
-      sortedPieces.sort(function (a, b) {
-        return b.prix - a.prix;
-      });
-      document.querySelector(".fiches").textContent = "";
-      genererPieces(sortedPieces);
-    });
-
-    // get all piece which price is lower thant 35eur
-    const noms = pieces.map((piece) => piece.nom);
-    for (let i = pieces.length - 1; i >= 0; i--) {
-      if (pieces[i].prix > 35) {
-        noms.splice(i, 1);
-      }
-    }
-    // create an affordable list
-    const pElement = document.createElement("p");
-    pElement.innerText = "Pièces abordables";
-    const abordablesElements = document.createElement("ul");
-    // add name to the list
-    for (let i = 0; i < noms.length; i++) {
-      const nomElement = document.createElement("li");
-      nomElement.innerText = noms[i];
-      abordablesElements.appendChild(nomElement);
-
-      document.querySelector(".abordables").appendChild(pElement).appendChild(abordablesElements);
-    }
-
-    // define name and price for the available list
-    const nomsDiponibles = pieces.map((piece) => piece.nom);
-    const prixDisponibles = pieces.map((piece) => piece.prix);
-
-    for (let i = pieces.length - 1; i >= 0; i--) {
-      if (pieces[i].disponibilité === false) {
-        nomsDiponibles.splice(i, 1);
-        prixDisponibles.splice(i, 1);
-      }
-    }
-    const disponibliteElement = document.createElement("ul");
-    // add name and price to the list
-    for (let i = 0; i < nomsDiponibles.length; i++) {
-      const nomElement = document.createElement("li");
-      nomElement.innerText = `${nomsDiponibles[i]} - ${prixDisponibles[i]} € `;
-      disponibliteElement.appendChild(nomElement);
-    }
-    const pElementDisponible = document.createElement("p");
-    pElementDisponible.innerText = "Pièces disponibles";
-    document
-      .querySelector(".disponibles")
-      .appendChild(pElementDisponible)
-      .appendChild(disponibliteElement);
-
-    // range bar
-    const inputPrixMax = document.querySelector("#prix-max");
-    inputPrixMax.addEventListener("input", function () {
-      const piecesFiltrees = pieces.filter(function (piece) {
-        return piece.prix <= inputPrixMax.value;
-      });
-      document.querySelector(".fiches").textContent = "";
-      genererPieces(piecesFiltrees);
-    });
-    
-  })
-  
-  .catch(error => {
-    // Gérer les erreurs éventuelles ici
-    console.error("Erreur lors de la récupération des données:", error);
-  });
-
-function genererPieces(pieces) {
-  for (let i = 0; i < pieces.length; i++) {
-    // creation of the different elements we will need
-    const article = pieces[i];
-
-    // getting the fiche section from the DOM
-    const sectionFiches = document.querySelector(".fiches");
-
-    // Element creation section:
-    // create piece element:
-    const pieceElement = document.createElement("article");
-    // create img element:
-    const imageElement = document.createElement("img");
-    imageElement.src = article.image;
-    // create h2 element for name:
-    const nomElement = document.createElement("h2");
-    nomElement.innerText = article.nom;
-    // create p element for price:
-    const prixElement = document.createElement("p");
-    // if price is under 35: € above: €€€
-    prixElement.innerText = `Prix: ${article.prix} €  (${article.prix < 35 ? "€" : "€€€"})`;
-    // create p element for category:
-    const categorieElement = document.createElement("p");
-    // if there is no category instead of having " undefined" we put ?? "(aucune catégorie)"
-    categorieElement.innerText = article.categorie ?? "(aucune catégorie)";
-    // description element
-    const descriptionElement = document.createElement("p");
-    descriptionElement.innerText =
-      article.description ?? "(Pas de description pour le moment.)";
-    // availability element
-    const disponibiliteElement = document.createElement("p");
-    disponibiliteElement.innerText = article.disponibilité ? "en stock" : "Rupture de stock";
-      //Opinion button
-      const avisBouton = document.createElement("button");
-      avisBouton.dataset.id = article.id;
-      avisBouton.textContent = "Afficher les avis";
-
-    sectionFiches.appendChild(pieceElement);
-    pieceElement.appendChild(imageElement);
-    pieceElement.appendChild(nomElement);
-    pieceElement.appendChild(prixElement);
-    pieceElement.appendChild(categorieElement);
-    pieceElement.appendChild(descriptionElement);
-    pieceElement.appendChild(disponibiliteElement);
-    pieceElement.appendChild(avisBouton);
-  }
-   // Ajout de la fonction ajoutListenersAvis
-      ajoutListenersAvis();
+if (!pieces) {
+    // getting datas from API
+    const reponse = await fetch("http://localhost:8081/pieces/");
+    pieces = await reponse.json();
+    // transform files in json files
+    const valeurPieces = JSON.stringify(pieces);
+    // store datas into the localstorage
+    window.localStorage.setItem("pieces", valeurPieces);
+} else {
+    pieces = JSON.parse(pieces);
 }
+
+    //Generates all products
+function genererPieces(pieces) {
+    for (let i = 0; i < pieces.length; i++) {
+        const article = pieces[i];
+        // Getting the element in the DOM
+        const sectionFiches = document.querySelector(".fiches");
+        // we create an article for each product
+        const pieceElement = document.createElement("article");
+        pieceElement.classList.add("article");
+        pieceElement.dataset.id = pieces[i].id;
+
+        // We create all the details of the product (image, name, price, availabilities, etc.)
+        const imageElement = document.createElement("img");
+        imageElement.style.width = "30%";
+        imageElement.src = article.image;
+        const nomElement = document.createElement("h3");
+        nomElement.style.fontWeight = "bold";
+        nomElement.style.textTransform = "uppercase";
+        nomElement.innerText = article.nom;
+        const prixElement = document.createElement("p");
+        prixElement.innerText = `Prix: ${article.prix} € (${article.prix < 35 ? "€" : "€€€"})`;
+        const categorieElement = document.createElement("p");
+        categorieElement.innerText = article.categorie ?? "(aucune catégorie)";
+        const descriptionElement = document.createElement("p");
+        descriptionElement.innerText =
+            article.description ?? "Pas de description pour le moment.";
+        const stockElement = document.createElement("p");
+        stockElement.innerText = article.disponibilite
+            ? "En stock"
+            : "Rupture de stock";
+        //Comments section
+        const avisBouton = document.createElement("button");
+        avisBouton.classList.add("p_btn");
+        avisBouton.dataset.id = article.id;
+        avisBouton.textContent = "Afficher les avis";
+        
+        // we connect the all the article details to the DOM
+        sectionFiches.appendChild(pieceElement);
+        pieceElement.appendChild(imageElement);
+        pieceElement.appendChild(nomElement);
+        pieceElement.appendChild(prixElement);
+        pieceElement.appendChild(categorieElement);
+        pieceElement.appendChild(descriptionElement);
+        pieceElement.appendChild(stockElement);
+        pieceElement.appendChild(avisBouton);
+    }
+    ajoutListenersAvis();
+}
+    //We connect comments from the api to the right products
+genererPieces(pieces);
+for (let i = 0; i < pieces.length; i++) {
+    const id = pieces[i].id;
+    const avisJSON = window.localStorage.getItem(`avis-piece-${id}`);
+    const avis = JSON.parse(avisJSON);
+    if (avis !== null) {
+        const pieceElement = document.querySelector(`article[data-id="${id}"]`);
+    }
+}
+
+    //Filter button creations
+        //button filter: lowest to highest
+const boutonTrier = document.querySelector(".btn-trier");
+boutonTrier.addEventListener("click", function () {
+    const piecesOrdonnees = Array.from(pieces);
+    piecesOrdonnees.sort(function (a, b) {
+        return a.prix - b.prix;
+    });
+    document.querySelector(".fiches").innerHTML = "";
+    genererPieces(piecesOrdonnees);
+});
+        //button filter: afordable (less than 35eur)
+const boutonFiltrer = document.querySelector(".btn-filtrer");
+boutonFiltrer.addEventListener("click", function () {
+    const piecesFiltrees = pieces.filter(function (piece) {
+        return piece.prix <= 35;
+    });
+    document.querySelector(".fiches").innerHTML = "";
+    genererPieces(piecesFiltrees);
+});
+
+        //button filter: highest to lowest
+const boutonDecroissant = document.querySelector(".btn-decroissant");
+boutonDecroissant.addEventListener("click", function () {
+    const piecesOrdonnees = Array.from(pieces);
+    piecesOrdonnees.sort(function (a, b) {
+        return b.prix - a.prix;
+    });
+    document.querySelector(".fiches").innerHTML = "";
+    genererPieces(piecesOrdonnees);
+});
+        //button filter: products with no description
+const boutonNoDescription = document.querySelector(".btn-nodesc");
+boutonNoDescription.addEventListener("click", function () {
+    const piecesFiltrees = pieces.filter(function (piece) {
+        return piece.description;
+    });
+    document.querySelector(".fiches").innerHTML = "";
+    genererPieces(piecesFiltrees);
+});
+
+//Affordable and available section:
+        //Affordable section
+const noms = pieces.map((piece) => piece.nom);
+for (let i = pieces.length - 1; i >= 0; i--) {
+    if (pieces[i].prix > 35) {
+        noms.splice(i, 1);
+    }
+}
+const abordableTitle = document.createElement("h2");
+abordableTitle.innerText = "Pièces abordables";
+abordableTitle.style.fontWeight = "bold"; 
+abordableTitle.style.textTransform = "uppercase"; 
+        // List creation
+const abordablesElements = document.createElement("ul");
+        //put the name products to the list
+for (let i = 0; i < noms.length; i++) {
+    const nomElement = document.createElement("li");
+    nomElement.innerText = `\u25A0 ${noms[i]}`;
+    abordablesElements.appendChild(nomElement);
+}
+document.querySelector(".abordables").appendChild(abordableTitle);
+document.querySelector(".abordables").appendChild(abordablesElements);
+
+
+//max price search
+const inputPrixMax = document.querySelector("#prix-max");
+inputPrixMax.addEventListener("input", function () {
+    const piecesFiltrees = pieces.filter(function (piece) {
+        return piece.prix <= inputPrixMax.value;
+    });
+    document.querySelector(".fiches").innerHTML = "";
+    genererPieces(piecesFiltrees);
+});
+
+// update datas for the localstorage
+const boutonMettreAJour = document.querySelector(".btn-maj");
+boutonMettreAJour.addEventListener("click", function () {
+    window.localStorage.removeItem("pieces");
+});
+
+//Affordable and available section:
+        //available section
+const nomsDisponibles = pieces.map((piece) => piece.nom);
+const prixDisponibles = pieces.map((piece) => piece.prix);
+
+for (let i = pieces.length - 1; i >= 0; i--) {
+    if (pieces[i].disponibilite === false) {
+        nomsDisponibles.splice(i, 1);
+        prixDisponibles.splice(i, 1);
+    }
+}
+const disponiblesElement = document.createElement("ul");
+for (let i = 0; i < nomsDisponibles.length; i++) {
+    const nomElement = document.createElement("li");
+    nomElement.innerText = `\u25A0 ${nomsDisponibles[i]} - ${prixDisponibles[i]} €`;
+    disponiblesElement.appendChild(nomElement);
+}
+const disponibleTitle = document.createElement("h2");
+disponibleTitle.innerText = "Pièces disponibles:";
+disponibleTitle.style.fontWeight = "bold";
+disponibleTitle.style.textTransform = "uppercase";
+document.querySelector(".disponibles").appendChild(disponibleTitle);
+document.querySelector(".disponibles").appendChild(disponiblesElement);
+
+
+await afficherGraphiqueAvis();
+
+ajoutListenerEnvoyerAvis();

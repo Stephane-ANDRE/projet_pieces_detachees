@@ -1,0 +1,18 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.p_titleSection{
+    @apply text-2xl font-bold uppercase;
+}
+
+.p_btn{
+    @apply rounded-md bg-orange-600  text-white;
+}
+.p_input{
+    @apply border border-orange-600;
+}
+
+.abordables{
+    @apply text-2xl font-bold uppercase;
+}

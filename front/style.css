@@ -1,0 +1,39 @@
+.fiches{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-content: flex-start; 
+}
+.abo-dispo {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+   gap:4rem;
+};
+
+.abordables {
+    
+    border: 2px solid black;
+    margin-bottom: 1rem;
+    
+
+};
+
+.disponibles {
+    gap: 2rem;
+    border: 2px solid black;
+    margin-bottom: 1rem;
+}
+
+/* Desktop situation  */
+@media screen and (min-width: 768px) {
+    .fiches {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr)); /* 2 columns */
+      gap: 20px; 
+      
+    }
+  }
+

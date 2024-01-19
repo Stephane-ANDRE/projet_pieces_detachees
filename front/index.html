@@ -1,36 +1,101 @@
 <!DOCTYPE html>
 <html lang="fr">
-	<head>
-		<meta charset="utf-8">
-		<title>Les Bonnes Pièces</title>
-		<link rel="stylesheet" href="styles.css">
-	
-	</head>
-	<body>
-		<header>
-			<img src="images/logo-les-bonnes-pieces.png" alt="LOGO">
-			<h1>Les Bonnes Pièces</h1>
-		</header>
-		<main>
-			<!-- Menu de recherche -->
-			<section class="filtres">
-				<h3>Filtres</h3>
-				
-				<button class="btn-trier">Trier par prix croissant</button>				
-				<button class="btn-filtrer">Filtrer les pièces non abordables</button>
-				<button class="btn-description">Filtrer par description</button>
-				<button class="btn-trier-desc">Trier par prix décroissant</button>
-				<p>Prix maximum:</p>
-				<input type="range" name="prix-max" id="prix-max" min="0" max="60" step="5">
-			</section>
 
-			<!-- Fiches produits -->
-			<section class="fiches">
-				<div class="abordables"></div>
-				<div class="disponibles"></div>		
-			</section>
-		</main>
-		<script type="module" src="./pieces.js"></script>
-		<script type="module" src="./avis.js"></script>
-	</body>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Les Bonnes Pièces</title>
+	<link href="./dist/main.css" rel="stylesheet">
+	<link href="./style.css" rel="stylesheet">
+	<script src="node_modules/chart.js/dist/chart.umd.js" defer></script>
+	<script type="module" src="pieces.js"></script>
+</head>
+
+<body>
+	<div class="container mx-auto border-2">
+		<!-- header begin -->
+		<header>
+			<div class="flex items-center bg-orange-600 col-span-12 lg:col-span-4">
+				<img src="images/logo-les-bonnes-pieces.png" alt="LOGO" class="w-1/4 p-3 rounded-3xl">
+				<h1 class="text-white text-5xl mx-auto">Les Bonnes Pièces</h1>
+			</div>
+		</header>
+		<!-- header end -->
+
+		<!-- main begin -->
+		<div class="grid grid-cols-12">
+			<!-- leftside begin: Search, notes and datas -->
+			<div id="leftSide" class="col-span-12 md:col-span-6 lg:col-span-4 p-3">
+				<!-- Search Menu -->
+				<section class="filtres">
+					<div class="filtres my-4">
+						<h2 class="p_titleSection">Filtres</h2>
+						<div class="grid grid-cols-12 ">
+							<div class="col-span-12 md:col-span-6 ">
+								<button class=" p_btn btn-trier">Trier par prix croissant</button>
+								<button class="p_btn btn-filtrer">Filtrer les pièces non abordables</button>
+								<button class="p_btn btn-decroissant">Trier par prix décroissant</button>
+								<button class="p_btn btn-nodesc">Filtrer les pièces sans description</button>
+							</div>
+						</div>
+					</div>
+
+					<h2 class="p_titleSection my-4">Prix maximum</h2>
+					<input class="appearance-none bg-orange-600 h-3 rounded-lg" type="range" name="prix-max"
+						id="prix-max" min="0" max="60" step="5">
+
+					<!-- Form begin -->
+					<div class="form my-4">
+						<h2 class="p_titleSection">Ajouter un avis</h2>
+						<div class="grid grid-cols-12 p-3">
+							<div class="col-span-12 lg:col-span-4">
+								<form class="formulaire-avis">
+									<div>Identifiant de la pièce :</div>
+									<input class="p_input" type="number" name="piece-id">
+									<div>Nom d'utilisateur :</div>
+									<input class="p_input" type="text" name="utilisateur">
+									<div>Avis :</div>
+									<input class="p_input" type="text" name="commentaire">
+									<div>Note:</div>
+									<input class="p_input" type="number" name="nbEtoiles" min="0" max="5">
+									<button class="p_btn ">Envoyer</button>
+								</form>
+							</div>
+						</div>
+						<!-- Form end -->
+
+						<!-- Datas begin -->
+						<h2 class="p_titleSection">Données</h2>
+						<button class="p_btn btn-maj">Mettre à jour les pièces</button>
+						<div class="grid grid-cols-12 p-3">
+							<div class="col-span-12 lg:col-span-5">
+								<h2 class="p_titleSection">Aperçu des avis</h2>
+								<canvas id="graphique-avis" width="10" height="10"></canvas>
+							</div>
+						</div>
+						<div class="grid grid-cols-12 p-3">
+							<div class="col-span-12 lg:col-span-5">
+								<h2 class="p_titleSection">Statistiques commentaires</h2>
+								<canvas id="graphique-dispo" width="10" height="10"></canvas>
+							</div>
+						</div>
+				</section>
+			</div>
+			<!-- Datas end -->
+
+			<!--Rightside column-->
+			<div id="rightSide" class="col-span-12 md:col-span-6 lg:col-span-8 p-3">
+				<!-- affordable and available products -->
+				<div class="abo-dispo my-4 ">
+					<div class="abordables"></div>
+					<div class="disponibles "></div>
+				</div>
+				<!-- products details and comments -->
+				<section class="fiches "></section>
+			</div>
+		</div>
+	</div>
+	</div>
+</body>
+
 </html>
